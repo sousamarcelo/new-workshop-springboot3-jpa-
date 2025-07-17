@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,9 +27,10 @@ public class User implements Serializable {
 	private String phone;
 	private String password;
 	
+	@JsonIgnore // para evitar conflito e looping de duas vias, porque nas duas classes cliente e pedido tem a annotaction de "um para muitos" e "muitos para um" isso gera um looping
 	//annotation para chaves estrangerias, um usuario pode ter muitos pedidos, mas o pedido só pode ter 1 usuario.
 	@OneToMany(mappedBy= "client") //dentro do parenteses deve-se informar o nome do atributo que está do outro lado da associação
-	private List<Order> orders = new ArrayList<>();
+	private List<Order> orders = new ArrayList<>(); //@JsonIgnore --> quando existe uma associação "para muitos" que é esse caso, um cliente pode ter muitos pedidos, o jpa não carrega os objetos no json(lazy loading), ja ao contrario carrega, ou seja quando existe um pedido para um cliente o JPA carrega o pedido e o cliente associado, porque um pedido só pode ter um cliente. caso queira que funcione ao contrario basta alterar o "@JsonIgnore" para o pedido, nesse caso no jaso carregara os usuarios e todos os pedidos associados a esse usuario.
 	
 	public User() {
 	}
