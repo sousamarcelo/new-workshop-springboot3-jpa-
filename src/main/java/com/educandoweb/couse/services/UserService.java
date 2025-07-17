@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.educandoweb.couse.entities.User;
 import com.educandoweb.couse.repositories.UserRepository;
+import com.educandoweb.couse.services.exceptions.ResourceNotFoundException;
 
 //"@Component ou @Service"Regitrando a classe como componente para que as injeções de dependencias dessa classe utilizadas em outras classe funcione
 @Service
@@ -22,7 +23,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> obj = repository.findById(id);
-		return obj.get(); //o get retorna o objeto do tipo <User> que estiver dentro do "obj"(Opctional)
+		return obj.orElseThrow(() -> new ResourceNotFoundException(id)); //o metodo "orElseThrow()" tenta fezer um get, caso ocorre a exceção por vazio lança a exceção personalizada do argumento
 	}
 	
 	//retornar o usuario salvo
