@@ -13,6 +13,8 @@ import com.educandoweb.couse.repositories.UserRepository;
 import com.educandoweb.couse.services.exceptions.DatabaseException;
 import com.educandoweb.couse.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 //"@Component ou @Service"Regitrando a classe como componente para que as injeções de dependencias dessa classe utilizadas em outras classe funcione
 @Service
 public class UserService {
@@ -49,9 +51,14 @@ public class UserService {
 	}
 	
 	public User update(Long id, User obj) {
-		User entity = repository.getReferenceById(id); //esse metodo "getReferenceById" é mais vantagoso que o "findById(id)" porque é um objeto monitorado sendo possivel trabalhar com ele, o "findById(id)" custaria o acesso ao banco para buscar o usuario. 
-		updateData(entity, obj);
-		return repository.save(entity);
+		try {
+			User entity = repository.getReferenceById(id); //esse metodo "getReferenceById" é mais vantagoso que o "findById(id)" porque é um objeto monitorado sendo possivel trabalhar com ele, o "findById(id)" custaria o acesso ao banco para buscar o usuario. 
+			updateData(entity, obj);
+			return repository.save(entity);
+		} catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
+	
 	}
 
 	//nesse metodo auxiliar nem todos os dados necessariamente devem ser atualizar, no exemplo atualizamos somente 3 dados. o id nem a senha serão atualizados nesse caso
