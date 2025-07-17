@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.educandoweb.couse.entities.pk.OrderItemPK;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -15,11 +16,13 @@ public class OrderItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId //porque é uma chave composta não foi utilizado o @Id....
-	private OrderItemPK id;
+	private OrderItemPK id = new OrderItemPK(); //sempre que for criar um classe auxiliar que é um id composto, precisa instacia-la
 	
 	private Integer quantity;
 	private Double price;
 	
+	public OrderItem() {
+	}
 	
 	public OrderItem(Order order, Product product, Integer quantity, Double price) { //setando o objeto OrderItemPK atraves do construtor do OrderItem, uma vez que a classe OrderItem contem a composição
 		
@@ -30,6 +33,7 @@ public class OrderItem implements Serializable {
 	}
 	
 	//inserido os gets e set de "Order" e "Product", mesmo não tendo os atributos dessas classes para manupulas a chasse pk é necessario os gets e sets por aqui mesmo(OrderItem)	
+	@JsonIgnore //para evitar o loopin de mão dupla no json, foi colocado aqui por que esse metodo que chama o pedido e o pedido chamando o item gerando o looping
 	public Order getOrder() {
 		return id.getOrder();
 	}
