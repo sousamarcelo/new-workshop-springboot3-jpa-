@@ -1,12 +1,15 @@
 package com.educandoweb.couse.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +24,10 @@ public class User implements Serializable {
 	private String email;
 	private String phone;
 	private String password;
+	
+	//annotation para chaves estrangerias, um usuario pode ter muitos pedidos, mas o pedido só pode ter 1 usuario.
+	@OneToMany(mappedBy= "client") //dentro do parenteses deve-se informar o nome do atributo que está do outro lado da associação
+	private List<Order> orders = new ArrayList<>();
 	
 	public User() {
 	}
@@ -71,6 +78,10 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public List<Order> getOrders(){
+		return orders;
 	}
 
 	@Override
