@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.educandoweb.couse.entities.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
@@ -25,6 +26,8 @@ public class Order implements Serializable {
 	
 	@JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT") //annotation para formatar o json, arg02 define o formato
 	private Instant moment;
+		
+	private Integer orderStatus; //foi colocar o orderStatus como integer ao invez de OrderStatus para explicitar ao banco que é um numero inteiro, é um tratamento expecifico da classe Order e somente no atributo, o contrutor continuara recebendo um tidpo OrderStatus
 	
 	//annotation para chave strangeria muitos para um, um pedido para ter um cliente e um cliente pode ter muitos pedidos
 	@ManyToOne
@@ -34,10 +37,11 @@ public class Order implements Serializable {
 	public Order() {
 	}
 
-	public Order(Long id, Instant moment, User client) {
+	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
 		this.id = id;
 		this.moment = moment;
+		setOrderStatus(orderStatus);;
 		this.client = client;
 	}
 
@@ -55,6 +59,18 @@ public class Order implements Serializable {
 
 	public void setMoment(Instant moment) {
 		this.moment = moment;
+	}
+	
+	//tratamento especial do OrderStatus utilizando o metodo feito para convesão de int para OrderStatus
+	public OrderStatus getOrderStatus() {
+		return OrderStatus.vaueOf(orderStatus);
+	}
+	
+	//tratamento especial do OrderStatus para atribuir ao atributo da classo o orderStatus recebido convertido para o codigo dele.
+	public void setOrderStatus(OrderStatus orderStatus) {
+		if (orderStatus != null) {
+			this.orderStatus = orderStatus.getCode();
+		}
 	}
 
 	public User getClient() {
