@@ -5,12 +5,14 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "tb_category")
@@ -22,7 +24,8 @@ public class Category implements Serializable {
 	private Long id;
 	private String name;
 	
-	@Transient  // um annotation provisoria para impedir que o JPA tente interpretar, uma medida provisario para continuar os testes
+	@JsonIgnore // inserido JsonIgnore para evitar o loop da requisição, como são relações muitos para muitos gerar esse looping se não utilizar essa annotation em uma das relações, precisa avaliar em qual se enquadra melhor, testes.
+	@ManyToMany(mappedBy = "categories") //referencia para tabela de join criada na classe associada(produto)
 	private Set<Product> products = new HashSet<>();
 	
 	public Category() {
